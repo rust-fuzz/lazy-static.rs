@@ -17,6 +17,7 @@ use self::std::sync::atomic::Ordering::SeqCst;
 use self::std::sync::Once;
 #[allow(deprecated)]
 pub use self::std::sync::ONCE_INIT;
+use self::std::thread::current;
 
 macro_rules! uninitialized {
     ( $x:expr ) => {{
@@ -75,6 +76,7 @@ impl<T: Sync> Lazy<T> {
             self.0.set(Some(f()));
             let node_box = Box::new(Node(INITED.load(SeqCst), self));
             let node_ptr = Box::into_raw(node_box);
+            let mut n = 0u32;
             loop {
                 let prev_ptr = INITED.compare_and_swap(
                     unsafe { (*node_ptr).0 } as *mut Node,
@@ -87,6 +89,10 @@ impl<T: Sync> Lazy<T> {
                 unsafe {
                     (*node_ptr).0 = prev_ptr;
                 }
+                n += 1;
+            }
+            if n != 0 {
+                debug!("{:?}: failed to set INITED {} times", current().id(), n);
             }
         });
 

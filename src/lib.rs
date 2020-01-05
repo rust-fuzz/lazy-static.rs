@@ -101,6 +101,10 @@ This crate provides one cargo feature:
 
 #[cfg(not(feature = "spin_no_std"))]
 #[macro_use]
+extern crate log;
+
+#[cfg(not(feature = "spin_no_std"))]
+#[macro_use]
 extern crate std;
 
 #[cfg(not(feature = "spin_no_std"))]

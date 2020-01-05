@@ -1,6 +1,19 @@
+extern crate test_env_log;
+
 #[macro_use]
 extern crate lazy_static;
+
+// `reset` is not thread safe, and, by default, `cargo test` uses multiple threads.
+// Feature `test_reset` enables the `reset` test and disables all other tests.
+#[cfg(not(feature = "test_reset"))]
+mod not_test_reset {
+
 use std::collections::HashMap;
+use test_env_log::test;
+// To see the logs, use the following command:
+// ```
+// RUST_LOG=debug cargo test -- --nocapture
+// ```
 
 lazy_static! {
     /// Documentation!
@@ -80,7 +93,7 @@ mod visibility {
 
     pub mod inner {
         lazy_static! {
-            pub(in visibility) static ref BAZ: Box<u32> = Box::new(42);
+            pub(in not_test_reset::visibility) static ref BAZ: Box<u32> = Box::new(42);
             pub(crate) static ref BAG: Box<u32> = Box::new(37);
         }
     }
@@ -162,12 +175,23 @@ lazy_static! {
 fn lifetime_name() {
     let _ = LIFETIME_NAME;
 }
+} // #[cfg(not(feature = "test_reset"))]
+
+#[cfg(all(feature = "test_reset", not(feature = "spin_no_std")))]
+mod test_reset {
+
+use std::sync::atomic::AtomicBool;
+use std::sync::atomic::Ordering::SeqCst;
+use test_env_log::test;
+// To see the logs, use the following command:
+// ```
+// RUST_LOG=debug cargo test --features=test_reset -- --nocapture
+// ```
 
 lazy_static! {
     static ref RESETTABLE_FLAG: AtomicBool = AtomicBool::new(false);
 }
 
-#[cfg(not(feature = "spin_no_std"))]
 #[test]
 fn reset() {
     assert_eq!((*RESETTABLE_FLAG).load(SeqCst), false);
@@ -180,3 +204,4 @@ fn reset() {
     }
     assert_eq!((*RESETTABLE_FLAG).load(SeqCst), false);
 }
+} // #[cfg(all(feature = "test_reset", not(feature = "spin_no_std")))]
