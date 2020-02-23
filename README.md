@@ -30,9 +30,7 @@ The function `reset` walks the linked list in order to set the initialized `lazy
 # Example
 
 ```rust
-#[macro_use]
-extern crate lazy_static;
-
+use lazy_static::lazy_static;
 use std::sync::Mutex;
 
 lazy_static! {
