@@ -17,6 +17,7 @@ use self::std::sync::atomic::Ordering::SeqCst;
 use self::std::sync::Once;
 #[allow(deprecated)]
 pub use self::std::sync::ONCE_INIT;
+#[cfg(feature = "log")]
 use self::std::thread::current;
 
 macro_rules! uninitialized {
@@ -92,6 +93,7 @@ impl<T: Sync> Lazy<T> {
                 n += 1;
             }
             if n != 0 {
+                #[cfg(feature = "log")]
                 debug!("{:?}: failed to set INITED {} times", current().id(), n);
             }
         });

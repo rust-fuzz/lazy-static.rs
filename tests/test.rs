@@ -12,7 +12,7 @@ use std::collections::HashMap;
 use test_env_log::test;
 // To see the logs, use the following command:
 // ```
-// RUST_LOG=debug cargo test -- --nocapture
+// RUST_LOG=debug cargo test --features=log -- --nocapture
 // ```
 
 lazy_static! {
@@ -185,7 +185,7 @@ use std::sync::atomic::Ordering::SeqCst;
 use test_env_log::test;
 // To see the logs, use the following command:
 // ```
-// RUST_LOG=debug cargo test --features=test_reset -- --nocapture
+// RUST_LOG=debug cargo test --features=log,test_reset -- --nocapture
 // ```
 
 lazy_static! {

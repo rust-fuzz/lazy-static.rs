@@ -16,6 +16,7 @@ exclude = ["/.travis.yml", "/appveyor.yml"]
 
 [dependencies.log]
 version = "0.4.8"
+optional = true
 
 [dependencies.spin]
 version = "0.5.0"
