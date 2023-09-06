@@ -1,3 +1,5 @@
+# This repository is deprecated. See https://github.com/rust-fuzz/afl.rs/issues/369.
+
 resettable-lazy-static.rs
 =========================
 
